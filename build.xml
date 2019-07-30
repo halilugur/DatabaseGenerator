@@ -1,0 +1,37 @@
+<?xml version = "1.0"?>
+<project name="DdlToDatabase">
+    <property file="./database.properties"></property>
+    <path id="runtime-classpath">
+        <fileset dir="lib">
+            <include name="**/*.jar"/>
+        </fileset>
+    </path>
+    <target name="database-setup"
+        description="Creates the database structure and inserts data into the database">
+        <echo>starting database setup.........</echo>
+        <echo>------------------------------------------</echo>
+        <echo>database type selected is ${database.type}</echo>
+        <echo>database connection url is ${database.url}</echo>
+        <echo>username for database is ${database.username}</echo>
+        <echo>password for database is ${database.password}</echo>
+        <!-- not a good practice to echo password in production -->
+        <echo>driver detected for connection is ${database.driver}</echo>
+        <echo>------------------------------------------</echo>
+        <taskdef name="ddlToDatabase"
+           classname="org.apache.ddlutils.task.DdlToDatabaseTask">
+            <classpath refid="runtime-classpath"/>
+        </taskdef>
+        <ddlToDatabase>
+            <database url="${database.url}"
+              driverClassName="${database.driver}"
+              username="${database.username}"
+              password="${database.password}"/>
+            <fileset dir="./">
+                <include name="project-schema.xml"/>
+            </fileset>
+            <createDatabase failonerror="false"/>
+            <writeSchemaToDatabase/>
+        </ddlToDatabase>
+    </target>
+</project>
+
